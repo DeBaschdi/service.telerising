@@ -1,0 +1,9 @@
+{
+  "provider": "zattoo.com",
+  "login": "username@example.com",
+  "password": "mypassword123",
+  "interface": "eth0",
+  "server": "fr5-0",
+  "ffmpeg_lib": "/usr/bin/ffmpeg",
+  "port": "8080"
+}

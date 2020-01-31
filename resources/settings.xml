@@ -1,0 +1,17 @@
+<settings>
+    <category label="Basic Settings">
+        <setting id="hide-osd-messages" type="bool" label="Hide OSD Messages" default="false"/>
+        <setting id="provider" type="text" label="Provider" default="zattoo.com"/>
+        <setting id="username" type="text" label="Login" default="username@example.com"/>
+        <setting id="password" type="text" label="Password" default="" option="hidden"/>
+    </category>
+    <category label="Advanced Settings">
+        <setting id="server" type="text" label="Server" default="fr5-0"/>
+        <setting id="port" type="text" label="Listen Port" default="8080"/>
+        <setting id="network_device" type="text" label="Network Device" default="eth0"/>
+        <setting id="ffmpeg_path" type="text" label="FFmpeg Path" default="/usr/bin/ffmpeg"/>
+    </category>
+    <category label="Debug">
+        <setting id="showlog" type="action" label="Show live Log" action="RunScript(special://home/addons/service.telerising/resources/lib/logviewer.py)" option="close" />
+    </category>
+</settings>
