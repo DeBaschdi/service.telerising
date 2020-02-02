@@ -27,10 +27,17 @@ username = ADDON.getSetting('username')
 password = ADDON.getSetting('password')
 
 ## Read Zattoo Advanced Settings
+ssl_verify = ADDON.getSetting('ssl_verify')
 server = ADDON.getSetting('server')
 port = ADDON.getSetting('port')
 network_device = ADDON.getSetting('network_device')
 ffmpeg_path = ADDON.getSetting('ffmpeg_path')
+
+## Translate SSL_VERIFY
+if ssl_verify == 'true':
+    ssl_mode = "1"
+elif ssl_verify == 'false':
+    ssl_mode = "0"
 
 OSD = xbmcgui.Dialog()
 machine = platform.machine()
@@ -53,6 +60,7 @@ def use_settings():
         data['login'] = username
         data['password'] = password
         data['server'] = server
+        data['ssl_mode'] = ssl_mode
         data['port'] = port
         data['interface'] = network_device
         data['ffmpeg_lib'] = ffmpeg_path

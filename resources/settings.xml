@@ -6,6 +6,7 @@
         <setting id="password" type="text" label="Password" default="" option="hidden"/>
     </category>
     <category label="Advanced Settings">
+        <setting id="ssl_verify" type="bool" label="SSL VERIFY" default="true"/>
         <setting id="server" type="text" label="Server" default="fr5-0"/>
         <setting id="port" type="text" label="Listen Port" default="8080"/>
         <setting id="network_device" type="text" label="Network Device" default="eth0"/>
