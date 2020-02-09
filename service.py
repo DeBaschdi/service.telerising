@@ -25,6 +25,7 @@ oldlogfile = os.path.join(runpath, 'oldlog.txt')
 provider = ADDON.getSetting('provider')
 username = ADDON.getSetting('username')
 password = ADDON.getSetting('password')
+youth_protection_pin = ADDON.getSetting('youth_protection_pin')
 
 ## Read Zattoo Advanced Settings
 ssl_verify = ADDON.getSetting('ssl_verify')
@@ -59,6 +60,7 @@ def use_settings():
         data['provider'] = provider
         data['login'] = username
         data['password'] = password
+        data['youth_protection_pin'] = youth_protection_pin
         data['server'] = server
         data['ssl_mode'] = ssl_mode
         data['port'] = port

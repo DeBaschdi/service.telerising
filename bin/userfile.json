@@ -6,5 +6,6 @@
   "server": "fr5-0",
   "ffmpeg_lib": "/usr/bin/ffmpeg",
   "port": "8080",
-  "ssl_mode": "0"
+  "ssl_mode": "0",
+  "youth_protection_pin": "1234"
 }

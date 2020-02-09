@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="service.telerising" name="Telerising API" version="0.0.3" provider-name="DeBaschdi, sunsettrack4">
+<addon id="service.telerising" name="Telerising API" version="0.0.4" provider-name="DeBaschdi, sunsettrack4">
     <requires>
         <import addon="xbmc.python" version="2.14.0"/>
         <import addon="script.module.requests"/>
@@ -8,7 +8,7 @@
     <extension point="xbmc.addon.metadata">
         <platform>linux</platform>
         <summary>Telerising API</summary>
-        <description> Zattoo for tvHeadend, VLC and IPTVsimple</description>
+        <description> Zattoo and Reseller for tvHeadend, VLC and IPTVsimple</description>
         <source>https://github.com/DeBaschdi/repo/tree/master/service.telerising-api/</source>
         <forum>https://www.kodinerds.net/index.php/Thread/60875-Telerising-API-Zattoo-f%C3%BCr-tvHeadend-und-VLC-v0-2-4-2020-01-25/</forum>
     </extension>

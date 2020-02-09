@@ -4,6 +4,7 @@
         <setting id="provider" type="text" label="Provider" default="zattoo.com"/>
         <setting id="username" type="text" label="Login" default="username@example.com"/>
         <setting id="password" type="text" label="Password" default="" option="hidden"/>
+        <setting id="youth_protection_pin" type="text" label="Youth Protection Pin" default="" option="hidden"/>
     </category>
     <category label="Advanced Settings">
         <setting id="ssl_verify" type="bool" label="SSL VERIFY" default="true"/>
