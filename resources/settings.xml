@@ -1,17 +1,29 @@
 <settings>
     <category label="Basic Settings">
-        <setting id="hide-osd-messages" type="bool" label="Hide OSD Messages" default="false"/>
-        <setting id="provider" type="text" label="Provider" default="zattoo.com"/>
+        <setting id="hide-osd-messages" type="bool" label="Hide OSD Messages" default="false"/><!-- OSD-Messages -->
+        <setting type="sep"/>
+        <setting label="Provider Selection" type="lsep"/> <!-- Provider Selection -->
+        <setting id="provider" type="select" label="Provider" default="zattoo.com" values="zattoo.com|wilmaa.com|www.1und1.tv|tvonline.swb-gruppe.de|nettv.netcologne.de|tvonline.ewe.de|tv.salt.ch|mobiltv.quickline.com|tvplus.m-net.de|player.waly.tv|www.meinwelt.cc|www.bbv-tv.net|www.vtxtv.ch|www.myvisiontv.ch|iptv.glattvision.ch|www.saktv.ch|www.quantum-tv.com|tv.eir.ie" /> <!-- Provider -->
+        <setting type="sep"/>
+        <setting label="Login Settings" type="lsep"/> <!-- Login Data -->
         <setting id="username" type="text" label="Login" default="username@example.com"/>
         <setting id="password" type="text" label="Password" default="" option="hidden"/>
+        <setting type="sep"/>
+		<setting label="Youth Protection" type="lsep"/> <!-- Youth Protection -->
         <setting id="youth_protection_pin" type="text" label="Youth Protection Pin" default="" option="hidden"/>
     </category>
     <category label="Advanced Settings">
         <setting id="ssl_verify" type="bool" label="SSL VERIFY" default="true"/>
-        <setting id="server" type="text" label="Server" default="fr5-0"/>
+        <setting type="sep"/>
+		<setting label="Server Settings" type="lsep"/>
+        <setting id="server" type="select" label="Server" default="fr5-0" values="fra3-0|fra3-1|fra3-2|fra3-3|fr5-0|fr5-1|fr5-2|fr5-3|fr5-4|fr5-5|zh2-0|zh2-1|zh2-2|zh2-3|zh2-4|zh2-5|zh2-6|zh2-7|zh2-8|zh2-9|zba6-0|zba6-1|zba6-2|1und1-fra1902-1|1und1-fra1902-2|1und1-fra1902-3|1und1-fra1902-4|1und1-hhb1000-1|1und1-hhb1000-2|1und1-hhb1000-3|1und1-hhb1000-4|1und1-dus1901-1|1und1-dus1901-2|1und1-dus1901-3|1und1-dus1901-4|1und1-ess1901-1|1und1-ess1901-2|matterlau1-0|matterlau1-1|matterzrh1-0|matterzrh1-1" />
+        <setting type="sep"/>
+		<setting label="Network Settings" type="lsep"/>
         <setting id="port" type="text" label="Listen Port" default="8080"/>
         <setting id="network_device" type="text" label="Network Device" default="eth0"/>
-        <setting id="ffmpeg_path" type="text" label="FFmpeg Path" default="/usr/bin/ffmpeg"/>
+        <setting type="sep"/>
+		<setting label="Path to ffmpeg on Tvheadend Mashine" type="lsep"/>
+        <setting id="ffmpeg_path" type="text" label="FFmpeg Path" default="/storage/.kodi/addons/tools.ffmpeg-tools/bin/ffmpeg"/>
     </category>
     <category label="Debug">
         <setting id="showlog" type="action" label="Show live Log" action="RunScript(special://home/addons/service.telerising/resources/lib/logviewer.py)" option="close" />
