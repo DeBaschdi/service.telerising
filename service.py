@@ -138,10 +138,21 @@ def run_telerising():
         command = "cd " + runpath + " && sleep 1 && ./telerising_arm64"
         subprocess.Popen(command, shell=True)
 
-    #Check Running State in logfile
-    time.sleep(7)
-    f = open(logfile, 'r')
-    file_contents = f.read()
+    # Check Running State in logfile
+    # wait for logfile creation max 30 seconds.
+    retries = 30
+    while retries > 0:
+        try:
+            f = open(logfile, 'r')
+            file_contents = f.read()
+            break
+        except IOError as e:
+            xbmc.sleep(1000)
+            retries -= 1
+    if retries == 0:
+        notify(addon_name, "Could not open Logfile")
+        log("Could not open Logfile", xbmc.LOGERROR)
+
     started_string = "API STARTED!"
     login_failed = "please re-check login data"
     interface_failed = "Custom interface can't be used"
