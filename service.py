@@ -139,7 +139,7 @@ def run_telerising():
         subprocess.Popen(command, shell=True)
 
     #Check Running State in logfile
-    time.sleep(5)
+    time.sleep(7)
     f = open(logfile, 'r')
     file_contents = f.read()
     started_string = "API STARTED!"
@@ -148,6 +148,10 @@ def run_telerising():
     provider_failed = "Can't connect to"
     account_failed = "No Swiss IP address detected"
     binary_failed = "ERROR"
+    webservice_failed = "UNABLE TO LOGIN TO WEBSERVICE"
+    session_failed = "UNABLE TO CREATE SESSION FILE"
+    interface_failed2 = "Broadcast interface can't be found"
+    api_failed ="Please recheck your IP/domain/port"
 
     ## Check if API is Started
     if re.search(started_string, file_contents):
@@ -164,6 +168,11 @@ def run_telerising():
         notify(addon_name, "Custom interface can't be used (unknown)", icon=xbmcgui.NOTIFICATION_ERROR)
         log("Custom interface can't be used", xbmc.LOGERROR)
 
+    ##Check if Interface(2) cant be used
+    if re.search(interface_failed2, file_contents):
+        notify(addon_name, "Broadcast interface can't be found!", icon=xbmcgui.NOTIFICATION_ERROR)
+        log("Broadcast interface can't be found!", xbmc.LOGERROR)
+
     ##Check if Provider cant be used
     if re.search(provider_failed, file_contents):
         notify(addon_name, "Can't connect to Provider, Please Check Provider Settings and or Internet Connection", icon=xbmcgui.NOTIFICATION_ERROR)
@@ -173,6 +182,21 @@ def run_telerising():
     if re.search(account_failed, file_contents):
         notify(addon_name, "No Swiss IP address detected, Zattoo services can't be used", icon=xbmcgui.NOTIFICATION_ERROR)
         log("No Swiss IP address detected, Zattoo services can't be used", xbmc.LOGERROR)
+
+    ##Check Webservice
+    if re.search(webservice_failed, file_contents):
+        notify(addon_name, "UNABLE TO LOGIN TO WEBSERVICE", icon=xbmcgui.NOTIFICATION_ERROR)
+        log("UNABLE TO LOGIN TO WEBSERVICE", xbmc.LOGERROR)
+
+    ##Check Session
+    if re.search(session_failed, file_contents):
+        notify(addon_name, "UNABLE TO CREATE SESSION FILE", icon=xbmcgui.NOTIFICATION_ERROR)
+        log("UNABLE TO CREATE SESSION FILE", xbmc.LOGERROR)
+
+    ##Check API
+    if re.search(api_failed, file_contents):
+        notify(addon_name, "Please recheck your IP/domain/port configuration", icon=xbmcgui.NOTIFICATION_ERROR)
+        log("Please recheck your IP/domain/port configuration", xbmc.LOGERROR)
 
     ##Check if any Error exist
     time.sleep(6)
@@ -192,6 +216,8 @@ def startup():
         install_files()
         use_settings()
         move_log()
+        stop_telerising()
+        time.sleep(2)
         run_telerising()
     elif  machine_type() == False:
         exit()
