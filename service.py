@@ -144,6 +144,7 @@ def run_telerising():
     while retries > 0:
         try:
             f = open(logfile, 'r')
+            xbmc.sleep(8000)
             file_contents = f.read()
             break
         except IOError as e:
@@ -152,7 +153,6 @@ def run_telerising():
     if retries == 0:
         notify(addon_name, "Could not open Logfile")
         log("Could not open Logfile", xbmc.LOGERROR)
-
     started_string = "API STARTED!"
     login_failed = "please re-check login data"
     interface_failed = "Custom interface can't be used"
@@ -210,7 +210,7 @@ def run_telerising():
         log("Please recheck your IP/domain/port configuration", xbmc.LOGERROR)
 
     ##Check if any Error exist
-    time.sleep(6)
+    xbmc.sleep(6000)
     if re.search(binary_failed, file_contents):
         notify(addon_name, "ERROR, Please check Logfile for Details", icon=xbmcgui.NOTIFICATION_ERROR)
         log("Please check Logfile for Details", xbmc.LOGERROR)
@@ -228,7 +228,7 @@ def startup():
         use_settings()
         move_log()
         stop_telerising()
-        time.sleep(2)
+        xbmc.sleep(2000)
         run_telerising()
     elif  machine_type() == False:
         exit()
