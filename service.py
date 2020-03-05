@@ -34,6 +34,9 @@ port = ADDON.getSetting('port')
 network_device = ADDON.getSetting('network_device')
 ffmpeg_path = ADDON.getSetting('ffmpeg_path')
 
+## Read Zattoo Debug Settings
+restart_on_failure = ADDON.getSetting('restart_on_failure')
+
 ## Translate SSL_VERIFY
 if ssl_verify == 'true':
     ssl_mode = "1"
@@ -118,13 +121,10 @@ def stop_telerising():
     ## First we need to Kill the "sh" Pid to Prevent Zombie Pids
     subprocess.Popen(['ps ax | grep "&& ./telerising_" | cut -c1-6 | sed "s/^/kill -9 /" | bash'], shell=True)
     ##Now we can Kill all *telerising_* Pid
+    xbmc.sleep(1000)
     subprocess.Popen(['ps ax | grep "telerising_" | cut -c1-6 | sed "s/^/kill -9 /" | bash'], shell=True)
-    notify(addon_name, "API Stopped")
-    log('API Stopped', xbmc.LOGNOTICE)
 
 def run_telerising():
-    notify(addon_name, "Starting API....")
-    log("Starting API....", xbmc.LOGNOTICE)
     rights = "chmod 777 -R " + runpath
     subprocess.Popen(rights, shell=True)
     if machine == 'x86_64':
@@ -213,7 +213,7 @@ def run_telerising():
     xbmc.sleep(6000)
     if re.search(binary_failed, file_contents):
         notify(addon_name, "ERROR, Please check Logfile for Details", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("Please check Logfile for Details", xbmc.LOGERROR)
+        log("Please check Telerising Logfile for Details", xbmc.LOGERROR)
     f.close
 
 def startup():
@@ -229,19 +229,57 @@ def startup():
         move_log()
         stop_telerising()
         xbmc.sleep(2000)
+        notify(addon_name, "Starting API....")
+        log("Starting API....", xbmc.LOGNOTICE)
         run_telerising()
     elif  machine_type() == False:
         exit()
+
+## Read Logfile and check Runningstate, restart if restart_on_failure == 1
+def check_runningstate():
+    log("checking API State...", xbmc.LOGNOTICE)
+    retries = 30
+    while retries > 0:
+        try:
+            f = open(logfile, 'r')
+            xbmc.sleep(8000)
+            file_contents = f.read()
+            break
+        except IOError as e:
+            xbmc.sleep(1000)
+            retries -= 1
+    if retries == 0:
+        notify(addon_name, "Could not open Logfile")
+        log("Could not open Logfile", xbmc.LOGERROR)
+    binary_failed = "ERROR"
+    if re.search(binary_failed, file_contents):
+        notify(addon_name, "ERROR, API STOPPED Please check Logfile for Details", icon=xbmcgui.NOTIFICATION_ERROR)
+        log("API STOPPED, Please check Telerising Logfile for Details", xbmc.LOGERROR)
+        stop_telerising()
+        xbmc.sleep(5000)
+        notify(addon_name, "Restarting API after Error....")
+        log("Restarting API after Error....", xbmc.LOGNOTICE)
+        f.close
+        startup()
+    f.close
+
 
 if __name__ == '__main__':
     monitor = xbmc.Monitor()
 
     startup()
+
     # Wait for Binary to Stop
     while not monitor.abortRequested():
+        while not monitor.waitForAbort(10):
+            if restart_on_failure == 'true':
+                check_runningstate()
         # Sleep/wait for abort for 10 seconds
         if monitor.waitForAbort(10):
             # Abort was requested while waiting. We should exit
+            notify(addon_name, "API Stopped")
+            log('API Stopped', xbmc.LOGNOTICE)
             stop_telerising()
             break
-        #xbmc.log("waiting next 10 secs", level=xbmc.LOGNOTICE)
+
+

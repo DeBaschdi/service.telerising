@@ -26,6 +26,10 @@
         <setting id="ffmpeg_path" type="text" label="FFmpeg Path" default="/storage/.kodi/addons/tools.ffmpeg-tools/bin/ffmpeg"/>
     </category>
     <category label="Debug">
+        <setting label="Telerising Log" type="lsep"/>
         <setting id="showlog" type="action" label="Show live Log" action="RunScript(special://home/addons/service.telerising/resources/lib/logviewer.py)" option="close" />
+        <setting type="sep"/>
+        <setting label="API Checker" type="lsep"/>
+        <setting id="restart_on_failure" type="bool" label="Restart API automatic on failure" default="true"/><!-- OSD-Messages -->
     </category>
 </settings>
