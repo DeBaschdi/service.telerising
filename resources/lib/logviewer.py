@@ -45,7 +45,10 @@ class textViewer(BaseWindow):
 
     def settitle(self, title):
         self.title = title
-        self.getControl(textViewer.TITLE_WINDOW_ID).setLabel(self.title)
+        try:
+            self.getControl(textViewer.TITLE_WINDOW_ID).setLabel(self.title)
+        except RuntimeError as e:
+            xbmc.log(str(e), xbmc.LOGERROR)
 
 def createWindowContent(logfile):
     t_window = list()
