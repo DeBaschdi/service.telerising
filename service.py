@@ -5,9 +5,9 @@ import xbmc
 import xbmcaddon
 import subprocess
 import re
-import time
 import platform
 import xbmcvfs
+from typing import List, Any
 
 ADDON = xbmcaddon.Addon(id="service.telerising")
 addon_name = ADDON.getAddonInfo('name')
@@ -21,21 +21,42 @@ mute_notify = ADDON.getSetting('hide-osd-messages')
 logfile = os.path.join(runpath, 'log.txt')
 oldlogfile = os.path.join(runpath, 'oldlog.txt')
 
-## Read Zattoo Basic Settaddonpathings
+## Read Zattoo Basic Settings
 provider = ADDON.getSetting('provider')
 username = ADDON.getSetting('username')
 password = ADDON.getSetting('password')
 youth_protection_pin = ADDON.getSetting('youth_protection_pin')
+ondemand = ADDON.getSetting('ondemand')
 
 ## Read Zattoo Advanced Settings
 ssl_verify = ADDON.getSetting('ssl_verify')
 server = ADDON.getSetting('server')
 port = ADDON.getSetting('port')
 network_device = ADDON.getSetting('network_device')
-ffmpeg_path = ADDON.getSetting('ffmpeg_path')
+
 
 ## Read Zattoo Debug Settings
 restart_on_failure = ADDON.getSetting('restart_on_failure')
+
+## Read Default Client Settings
+ffmpeg_path = ADDON.getSetting('ffmpeg_path')
+quality = ADDON.getSetting('quality')
+audio_profile = ADDON.getSetting('audio_profile')
+audio2 = ADDON.getSetting('audio2')
+dolby = ADDON.getSetting('dolby')
+ignore_maxrate = ADDON.getSetting('ignore_maxrate')
+loglevel = ADDON.getSetting('loglevel')
+
+# Translate Video Settings to Bandwidth
+
+bandwidth = dict({'432p25': '1500',
+                  '576p50': '2999',
+                  '720p25': '3000',
+                  '720p50': '5000',
+                  '1080p25': '4999',
+                  '1080p50': '8000'})
+bw = bandwidth[quality]
+
 
 ## Translate SSL_VERIFY
 if ssl_verify == 'true':
@@ -68,7 +89,15 @@ def use_settings():
         data['ssl_mode'] = ssl_mode
         data['port'] = port
         data['interface'] = network_device
+        data['ondemand'] = ondemand
+
         data['ffmpeg_lib'] = ffmpeg_path
+        data['bw'] = bw
+        data['audio2'] = audio2
+        data['dolby'] = dolby
+        data['profile'] = audio_profile
+        data['ignore_maxrate'] = ignore_maxrate
+        data['loglevel'] = loglevel
 
     ## create randomly named temporary file to avoid interference with other thread/asynchronous request
     tempfile = os.path.join(datapath, 'filename')
@@ -153,7 +182,9 @@ def run_telerising():
     if retries == 0:
         notify(addon_name, "Could not open Logfile")
         log("Could not open Logfile", xbmc.LOGERROR)
-    started_string = "API STARTED!"
+
+    started_string = "API STARTED"
+    login_success = "LOGIN OK"
     login_failed = "please re-check login data"
     interface_failed = "Custom interface can't be used"
     provider_failed = "Can't connect to"
@@ -164,56 +195,80 @@ def run_telerising():
     interface_failed2 = "Broadcast interface can't be found"
     api_failed ="Please recheck your IP/domain/port"
 
-    ## Check if API is Started
-    if re.search(started_string, file_contents):
-        notify(addon_name, "API Started")
-        log("API Started", xbmc.LOGNOTICE)
+    started_is = re.search(started_string, file_contents)
+    if not started_is:
+        retries = 30
+        while retries > 0:
+            f.close
+            f = open(logfile, 'r')
+            file_contents = f.read()
 
-    ##Check if Wrong Username / Password
-    if re.search(login_failed, file_contents):
-        notify(addon_name, "please re-check login data", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("please re-check login data", xbmc.LOGERROR)
+            ## Check if login is success
+            if re.search(started_string, login_success):
+                log("Login to Provider " + provider + ' OK, waiting for API to startup....', xbmc.LOGNOTICE)
 
-    ##Check if Interface cant be used
-    if re.search(interface_failed, file_contents):
-        notify(addon_name, "Custom interface can't be used (unknown)", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("Custom interface can't be used", xbmc.LOGERROR)
+            ## Check if API is Started
+            if re.search(started_string, file_contents):
+                notify(addon_name, "API Started")
+                log("API Started", xbmc.LOGNOTICE)
+                retries -= 30
 
-    ##Check if Interface(2) cant be used
-    if re.search(interface_failed2, file_contents):
-        notify(addon_name, "Broadcast interface can't be found!", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("Broadcast interface can't be found!", xbmc.LOGERROR)
+            ##Check if Wrong Username / Password
+            if re.search(login_failed, file_contents):
+                notify(addon_name, "please re-check login data", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("please re-check login data", xbmc.LOGERROR)
+                retries -= 30
 
-    ##Check if Provider cant be used
-    if re.search(provider_failed, file_contents):
-        notify(addon_name, "Can't connect to Provider, Please Check Provider Settings and or Internet Connection", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("Can't connect to Provider, Please Check Provider Settings and or Internet Connection", xbmc.LOGERROR)
+            ##Check if Interface cant be used
+            if re.search(interface_failed, file_contents):
+                notify(addon_name, "Custom interface can't be used (unknown)", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("Custom interface can't be used", xbmc.LOGERROR)
+                retries -= 30
 
-    ##Check if CH Account cant be used
-    if re.search(account_failed, file_contents):
-        notify(addon_name, "No Swiss IP address detected, Zattoo services can't be used", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("No Swiss IP address detected, Zattoo services can't be used", xbmc.LOGERROR)
+            ##Check if Interface(2) cant be used
+            if re.search(interface_failed2, file_contents):
+                notify(addon_name, "Broadcast interface can't be found!", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("Broadcast interface can't be found!", xbmc.LOGERROR)
+                retries -= 30
 
-    ##Check Webservice
-    if re.search(webservice_failed, file_contents):
-        notify(addon_name, "UNABLE TO LOGIN TO WEBSERVICE", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("UNABLE TO LOGIN TO WEBSERVICE", xbmc.LOGERROR)
+            ##Check if Provider cant be used
+            if re.search(provider_failed, file_contents):
+                notify(addon_name, "Can't connect to Provider, Please Check Provider Settings and or Internet Connection", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("Can't connect to Provider, Please Check Provider Settings and or Internet Connection" ,xbmc.LOGERROR)
+                retries -= 30
 
-    ##Check Session
-    if re.search(session_failed, file_contents):
-        notify(addon_name, "UNABLE TO CREATE SESSION FILE", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("UNABLE TO CREATE SESSION FILE", xbmc.LOGERROR)
+            ##Check if CH Account cant be used
+            if re.search(account_failed, file_contents):
+                notify(addon_name, "No Swiss IP address detected, Zattoo services can't be used", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("No Swiss IP address detected, Zattoo services can't be used", xbmc.LOGERROR)
+                retries -= 30
 
-    ##Check API
-    if re.search(api_failed, file_contents):
-        notify(addon_name, "Please recheck your IP/domain/port configuration", icon=xbmcgui.NOTIFICATION_ERROR)
-        log("Please recheck your IP/domain/port configuration", xbmc.LOGERROR)
+            ##Check Webservice
+            if re.search(webservice_failed, file_contents):
+                notify(addon_name, "UNABLE TO LOGIN TO WEBSERVICE", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("UNABLE TO LOGIN TO WEBSERVICE", xbmc.LOGERROR)
+                retries -= 30
+
+            ##Check Session
+            if re.search(session_failed, file_contents):
+                notify(addon_name, "UNABLE TO CREATE SESSION FILE", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("UNABLE TO CREATE SESSION FILE", xbmc.LOGERROR)
+                retries -= 30
+
+            ##Check API
+            if re.search(api_failed, file_contents):
+                notify(addon_name, "Please recheck your IP/domain/port configuration", icon=xbmcgui.NOTIFICATION_ERROR)
+                log("Please recheck your IP/domain/port configuration", xbmc.LOGERROR)
+                retries -= 30
+
+            xbmc.sleep(5000)
+            retries -= 1
 
     ##Check if any Error exist
-    xbmc.sleep(6000)
     if re.search(binary_failed, file_contents):
         notify(addon_name, "ERROR, Please check Logfile for Details", icon=xbmcgui.NOTIFICATION_ERROR)
         log("Please check Telerising Logfile for Details", xbmc.LOGERROR)
+
     f.close
 
 def startup():
@@ -237,7 +292,6 @@ def startup():
 
 ## Read Logfile and check Runningstate, restart if restart_on_failure == 1
 def check_runningstate():
-    log("checking API State...", xbmc.LOGNOTICE)
     retries = 30
     while retries > 0:
         try:
@@ -252,6 +306,8 @@ def check_runningstate():
         notify(addon_name, "Could not open Logfile")
         log("Could not open Logfile", xbmc.LOGERROR)
     binary_failed = "ERROR"
+    started_string = "API STARTED"
+
     if re.search(binary_failed, file_contents):
         notify(addon_name, "ERROR, API STOPPED Please check Logfile for Details", icon=xbmcgui.NOTIFICATION_ERROR)
         log("API STOPPED, Please check Telerising Logfile for Details", xbmc.LOGERROR)
@@ -261,6 +317,11 @@ def check_runningstate():
         log("Restarting API after Error....", xbmc.LOGNOTICE)
         f.close
         startup()
+
+    api_started = re.search(started_string, file_contents)
+    if api_started:
+        log("API-CHECK API seems to be running... OK", xbmc.LOGNOTICE)
+
     f.close
 
 

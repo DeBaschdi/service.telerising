@@ -11,7 +11,26 @@
         <setting type="sep"/>
 		<setting label="Youth Protection" type="lsep"/> <!-- Youth Protection -->
         <setting id="youth_protection_pin" type="text" label="Youth Protection Pin" default="" option="hidden"/>
+        <setting label="Enable VOD Service" type="lsep"/> <!-- Enable VOD Service -->
+        <setting id="ondemand" type="bool" label="Enable VOD Service (zattoo only)" default="false"/><!-- Connection-Type -->
+        <setting type="sep"/>
     </category>
+
+    <category label="Client Settings">
+        <setting label="Default Client Settings" type="lsep"/>
+        <setting id="ignore_maxrate" type="bool" label="Ignore Maxrate" default="false" values="true|false"/>
+        <setting id="loglevel" type="text" label="ffmpeg loglevel" default="fatal"/>
+        <setting id="quality" type="select" label="Quality" default="1080p50" values="432p25|576p50|720p25|720p50|1080p25|1080p50"/>
+        <setting id="platform" type="select" label="Platform" default="hls5" values="hls|hls5"/>
+        <setting id="ffmpeg_path" type="text" label="FFmpeg Path" default="/storage/.kodi/addons/tools.ffmpeg-tools/bin/ffmpeg"/>
+        <setting label="One Audio Stream" type="lsep"/>
+        <setting id="audio2" type="bool" label="Use 2nd audio stream (HLS5 only)" default="false"/>
+        <setting id="dolby" type="bool" label="Use Dolby audio (HLS5 only)" default="false"/>
+        <setting label="Two Audio Streams" type="lsep" />
+        <setting id="audio_profile" type="select" label="Audio Profile" default="1" values="1|2|3|4"/>
+        <setting type="sep"/>
+    </category>
+
     <category label="Advanced Settings">
         <setting id="ssl_verify" type="bool" label="SSL VERIFY" default="true"/>
         <setting type="sep"/>
@@ -22,9 +41,8 @@
         <setting id="port" type="text" label="Listen Port" default="8180"/>
         <setting id="network_device" type="text" label="Network Device" default="eth0"/>
         <setting type="sep"/>
-		<setting label="Path to ffmpeg on Tvheadend Mashine" type="lsep"/>
-        <setting id="ffmpeg_path" type="text" label="FFmpeg Path" default="/storage/.kodi/addons/tools.ffmpeg-tools/bin/ffmpeg"/>
     </category>
+
     <category label="Debug">
         <setting label="Telerising Log" type="lsep"/>
         <setting id="showlog" type="action" label="Show live Log" action="RunScript(special://home/addons/service.telerising/resources/lib/logviewer.py)" option="close" />

@@ -5,7 +5,17 @@
   "interface": "eth0",
   "server": "fr5-0",
   "ffmpeg_lib": "/usr/bin/ffmpeg",
-  "port": "8080",
+  "port": "8180",
   "ssl_mode": "0",
-  "youth_protection_pin": "1234"
+  "youth_protection_pin": "1234",
+  "platform": "hls5",
+  "bw": "8000",
+  "profile": "1",
+  "audio2": "false",
+  "dolby": "false",
+  "ignore_maxrate": "false",
+  "loglevel": "fatal",
+  "ondemand": "false",
+  "code": "",
+  "ssldomain": ""
 }
