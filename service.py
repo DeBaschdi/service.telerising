@@ -7,7 +7,7 @@ import subprocess
 import re
 import platform
 import xbmcvfs
-from typing import List, Any
+
 
 ADDON = xbmcaddon.Addon(id="service.telerising")
 addon_name = ADDON.getAddonInfo('name')
