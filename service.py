@@ -284,8 +284,8 @@ def startup():
         move_log()
         stop_telerising()
         xbmc.sleep(2000)
-        notify(addon_name, "Starting API....")
-        log("Starting API....", xbmc.LOGNOTICE)
+        notify(addon_name, "Starting API 0.4.4....")
+        log("Starting API 0.4.4....", xbmc.LOGNOTICE)
         run_telerising()
     elif  machine_type() == False:
         exit()
@@ -306,7 +306,7 @@ def check_runningstate():
         notify(addon_name, "Could not open Logfile")
         log("Could not open Logfile", xbmc.LOGERROR)
     binary_failed = "ERROR"
-    started_string = "API STARTED"
+    started_string = "API V 0.4.4 STARTED"
 
     if re.search(binary_failed, file_contents):
         notify(addon_name, "ERROR, API STOPPED Please check Logfile for Details", icon=xbmcgui.NOTIFICATION_ERROR)
